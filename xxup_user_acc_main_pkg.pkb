@@ -6,7 +6,8 @@ AS
   
     CURSOR c_acc_lock
     IS
-    SELECT full_name, pps.actual_termination_date, papf.person_id
+    SELECT fu.user_name
+          ,pps.actual_termination_date
     FROM hr.per_all_people_f papf
        ,fnd_user fu
        ,per_periods_of_service pps
@@ -20,7 +21,30 @@ AS
                             )
       AND TRUNC(pps.actual_termination_date) <= TRUNC(SYSDATE);
   BEGIN
-    NULL;
+    
+    fnd_file.put_line(fnd_file.output, LPAD('USER_NAME',20, ' '));
+    fnd_file.put(fnd_file.output, LPAD('LOCK DATE',20, ' '));
+    
+    FOR r_acc_lock IN c_acc_lock
+    LOOP
+    
+      BEGIN
+        FND_USER_PKG.UPDATEUSER(x_user_name => r_acc_lock.user_name
+                                ,x_owner => null
+                                ,x_end_date => r_acc_lock.actual_termination_date
+                                );
+                        
+      
+--        COMMIT;
+        
+        
+        fnd_file.put_line(fnd_file.output, LPAD(r_acc_lock.user_name, 20, ' '));
+        fnd_file.put_line(fnd_file.output, LPAD(r_acc_lock.actual_termination_date, 20, ' '));
+        
+    END LOOP;
+    
+    
+    
   END lock_accounts;
 
 END xxup_user_acc_main_pkg;
