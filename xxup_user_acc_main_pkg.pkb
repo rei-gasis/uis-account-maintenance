@@ -35,8 +35,10 @@ AS
     
     fnd_file.put(fnd_file.output, RPAD('USERNAME',ln_pad, ' '));
     fnd_file.put(fnd_file.output, RPAD('FULL NAME',ln_pad, ' '));
+    fnd_file.put(fnd_file.output, RPAD('ACTUAL TERMINATION DATE',ln_pad, ' '));
     fnd_file.put_line(fnd_file.output, RPAD('LOCK DATE',ln_pad, ' '));
     
+    fnd_file.put(fnd_file.output, LPAD(' ',ln_pad, '-'));
     fnd_file.put(fnd_file.output, LPAD(' ',ln_pad, '-'));
     fnd_file.put(fnd_file.output, LPAD(' ',ln_pad, '-'));
     fnd_file.put_line(fnd_file.output, LPAD(' ',ln_pad, '-'));
@@ -46,7 +48,7 @@ AS
       BEGIN
         FND_USER_PKG.UPDATEUSER(x_user_name => r_acc_lock.user_name
                                 ,x_owner => null
-                                ,x_end_date => r_acc_lock.actual_termination_date
+                                ,x_end_date => TRUNC(SYSDATE)
                                 );
                         
       
@@ -55,7 +57,8 @@ AS
         
         fnd_file.put(fnd_file.output, RPAD(r_acc_lock.user_name, ln_pad, ' '));
         fnd_file.put(fnd_file.output, RPAD(r_acc_lock.full_name, ln_pad, ' '));
-        fnd_file.put_line(fnd_file.output, RPAD(r_acc_lock.actual_termination_date, ln_pad, ' '));
+        fnd_file.put(fnd_file.output, RPAD(r_acc_lock.actual_termination_date, ln_pad, ' '));
+        fnd_file.put_line(fnd_file.output, RPAD(to_char(SYSDATE,'DD-MON-YYYY'), ln_pad, ' '));
         
         
       EXCEPTION
