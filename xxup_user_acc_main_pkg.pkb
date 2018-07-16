@@ -29,6 +29,7 @@ AS
       AND fu.end_date IS NULL; --exclude already terminated employees
       
   BEGIN
+
     fnd_file.put_line(fnd_file.output, 'UP User Account Maintenance v1.0');
     fnd_file.put_line(fnd_file.output, 'Function: Lock account');
     fnd_file.put_line(fnd_file.output, '');
@@ -67,6 +68,9 @@ AS
       END;
     END LOOP;
     
+
+    NULL;
+
   END lock_accounts;
 
 END xxup_user_acc_main_pkg;
