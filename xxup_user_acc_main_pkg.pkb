@@ -1,4 +1,3 @@
-/*written by WDGASIS - 16 JUL 2018*/
 create or replace PACKAGE  BODY xxup_user_acc_main_pkg
 AS
   PROCEDURE lock_accounts(x_errbuf OUT VARCHAR2
@@ -26,20 +25,19 @@ AS
                             AND pps.actual_termination_date IS NOT NULL
                             )
       AND TRUNC(pps.actual_termination_date) <= TRUNC(SYSDATE)
-      AND fu.end_date IS NULL; --exclude already terminated employees
+      AND person_type_id = 1130 -- currently ex-employee
+      AND fu.end_date IS NULL; --exclude already locked employees
       
   BEGIN
-
     fnd_file.put_line(fnd_file.output, 'UP User Account Maintenance v1.0');
     fnd_file.put_line(fnd_file.output, 'Function: Lock account');
+    fnd_file.put_line(fnd_file.output, 'Lock Date: ' || to_char(TRUNC(SYSDATE),'DD-MON-YYYY'));
     fnd_file.put_line(fnd_file.output, '');
     
     fnd_file.put(fnd_file.output, RPAD('USERNAME',ln_pad, ' '));
     fnd_file.put(fnd_file.output, RPAD('FULL NAME',ln_pad, ' '));
-    fnd_file.put(fnd_file.output, RPAD('ACTUAL TERMINATION DATE',ln_pad, ' '));
-    fnd_file.put_line(fnd_file.output, RPAD('LOCK DATE',ln_pad, ' '));
+    fnd_file.put_line(fnd_file.output, RPAD('ACTUAL TERMINATION DATE',ln_pad, ' '));
     
-    fnd_file.put(fnd_file.output, LPAD(' ',ln_pad, '-'));
     fnd_file.put(fnd_file.output, LPAD(' ',ln_pad, '-'));
     fnd_file.put(fnd_file.output, LPAD(' ',ln_pad, '-'));
     fnd_file.put_line(fnd_file.output, LPAD(' ',ln_pad, '-'));
@@ -58,8 +56,7 @@ AS
         
         fnd_file.put(fnd_file.output, RPAD(r_acc_lock.user_name, ln_pad, ' '));
         fnd_file.put(fnd_file.output, RPAD(r_acc_lock.full_name, ln_pad, ' '));
-        fnd_file.put(fnd_file.output, RPAD(r_acc_lock.actual_termination_date, ln_pad, ' '));
-        fnd_file.put_line(fnd_file.output, RPAD(to_char(SYSDATE,'DD-MON-YYYY'), ln_pad, ' '));
+        fnd_file.put_line(fnd_file.output, RPAD(r_acc_lock.actual_termination_date, ln_pad, ' '));
         
         
       EXCEPTION
@@ -68,9 +65,6 @@ AS
       END;
     END LOOP;
     
-
-    NULL;
-
   END lock_accounts;
 
 END xxup_user_acc_main_pkg;
